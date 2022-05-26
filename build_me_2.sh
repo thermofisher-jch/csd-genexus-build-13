@@ -7,6 +7,7 @@ artifact_names="./artifact_names.dat"
 
 mode="${1}"
 if [[ "x${mode}" != "xAssayDev" ]]
+then
 	if [[ "x${mode}" != "xdx" ]]
 	then
 		echo "Required argument: AssayDev or dx"
@@ -31,16 +32,18 @@ EOF
 # version was given by ${state_now} and pull it by FTP, simulating a genuine
 # build.
 first_line=1
+echo "{cat "${artifact_names}"}"
 for artifact in $(cat "${artifact_names}")
 do
+	echo "${artifact}"
 	artifact_found=0
 	for line in $(grep "^${artifact}" "${history}")
 	do
-		echo "${line}"
+		echo "Z ${line}"
 		match_to="$(echo $line | awk -F, '{print $8}')"
 		mode_to="$(echo $line | awk -F, '{print $10}')"
 		echo "${match_to} ${mode_to}"
-		if [[ "${match_to}" == "${state_now}" -a "${mode}" == "${mode_to}" ]]
+		if [ "${match_to}" == "${state_now}" -a "${mode}" == "${mode_to}" ]
 		then
 			artifact_found=1
 			url="$(echo "${line}" | awk -F, '{ print "http://lemon.itw/"$4"/TSDx/"$10"/updates/"$1"_"$2"_"$3".deb" }')"
